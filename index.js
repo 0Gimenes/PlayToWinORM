@@ -2,7 +2,11 @@ require("dotenv").config();
 const conn = require("./db/conn");
 
 const Usuario = require("./models/Usuario");
-const Jogo = require("./models/Jogo")
+const Jogo = require("./models/Jogo");
+
+const handlebars = require('express-handlebars');
+
+
 
 conn
     .sync()
@@ -16,6 +20,9 @@ conn
 const express = require("express");
 const app = express();
 
+app.engine("handlebars", handlebars.engine());
+app.set("view engine", "handlebars")
+
 app.use(
     express.urlencoded({
         extended: true,
@@ -23,9 +30,18 @@ app.use(
 );
 app.use(express.json());
 
-app.get("/usuarios/novo", (req, res) => {
-    res.sendFile(`${__dirname}/views/formUsuario.html`)
+app.get("/", (req, res) => {
+    res.render(`home`);
 });
+
+app.get("/usuarios", (req, res) => {
+    res.render(`usuarios`);
+});
+
+app.get("/usuarios/novo", (req, res) => {
+    res.render(`formUsuario`);
+});
+
 
 app.post("/usuarios/novo", async (req, res) => {
     const nickname = req.body.nickname;
